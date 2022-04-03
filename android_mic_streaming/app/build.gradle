@@ -9,7 +9,7 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "org.deepspeechdemo"
-        minSdkVersion 22
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -25,6 +25,10 @@ android {
     aaptOptions {
         noCompress "tflite"
     }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -34,10 +38,16 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    implementation 'org.mozilla.deepspeech:libdeepspeech:0.9.3'
+    implementation 'org.deepspeech:libdeepspeech:0.9.3'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    // pepper libs
+	implementation 'com.aldebaran:qisdk:1.7.5'
+	implementation 'com.aldebaran:qisdk-design:1.7.5'
+    // community libs
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-scalars:2.9.0"
 }
 

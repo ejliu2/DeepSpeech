@@ -10,12 +10,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.aldebaran.qi.sdk.QiContext
+import com.aldebaran.qi.sdk.QiSDK
+import com.aldebaran.qi.sdk.RobotLifecycleCallbacks
+import com.aldebaran.qi.sdk.design.activity.RobotActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import org.mozilla.deepspeech.libdeepspeech.DeepSpeechModel
+import org.deepspeech.libdeepspeech.DeepSpeechModel
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : RobotActivity(), RobotLifecycleCallbacks {
     private var model: DeepSpeechModel? = null
 
     private var transcriptionThread: Thread? = null
@@ -99,17 +103,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        checkAudioPermission()
-
-        // Create application data directory on the device
-        val modelsPath = getExternalFilesDir(null).toString()
-
-        status.text = "Ready. Copy model files to \"$modelsPath\" if running for the first time.\n"
-    }
-
     private fun stopListening() {
         isRecording.set(false)
     }
@@ -129,10 +122,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Register the RobotLifecycleCallbacks to this Activity.
+        QiSDK.register(this, this)
+        setContentView(R.layout.activity_main)
+        checkAudioPermission()
+
+        // Create application data directory on the device
+        val modelsPath = getExternalFilesDir(null).toString()
+
+        status.text = "Ready. Copy model files to \"$modelsPath\" if running for the first time.\n"
+    }
+
     override fun onDestroy() {
+        // Unregister the RobotLifecycleCallbacks for this Activity.
+        QiSDK.unregister(this, this)
         super.onDestroy()
         if (model != null) {
             model?.freeModel()
         }
+    }
+
+    override fun onRobotFocusGained(qiContext: QiContext) {
+        // The robot focus is gained.
+    }
+
+    override fun onRobotFocusLost() {
+        // The robot focus is lost.
+    }
+
+    override fun onRobotFocusRefused(reason: String) {
+        // The robot focus is refused.
     }
 }

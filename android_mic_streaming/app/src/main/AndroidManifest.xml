@@ -21,4 +21,5 @@
         </activity>
     </application>
 
+    <uses-feature android:name="com.softbank.hardware.pepper"/>
 </manifest>
